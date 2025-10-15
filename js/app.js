@@ -17,7 +17,7 @@ let allCategories = [];
 let currentBanner = 0;
 let bannerInterval = null;
 
-// Renderiza el header con logo, categorías, buscador y carrito
+
 function renderHeader(categories) {
     headerEl.innerHTML = `
         <div class="container mx-auto p-4 flex flex-row items-center justify-between">
@@ -39,7 +39,7 @@ function renderHeader(categories) {
             </div>
         </div>
     `;
-    // Eventos de categorías
+  
     headerEl.querySelectorAll('.category-filter').forEach(btn => {
         btn.addEventListener('click', () => {
             if (btn.dataset.category === 'all') {
@@ -53,7 +53,7 @@ function renderHeader(categories) {
             }
         });
     });
-    // Evento de búsqueda
+    
     const searchInput = headerEl.querySelector('#search-input');
     if (searchInput) {
         searchInput.addEventListener('input', debounce(handleSearch, 300));
@@ -72,7 +72,7 @@ function markActiveCategory(category) {
     }
 }
 
-// Banner dinámico
+
 function renderBanner(categories) {
     const banners = categories.map(cat => ({
         src: categoryImages[cat],
@@ -108,7 +108,7 @@ function renderBanner(categories) {
     });
 }
 
-// Carruseles por categoría agrupados
+
 function renderCategorizedCarousels(categories, products) {
     catalogSection.innerHTML = '';
     categories.forEach(category => {
@@ -122,7 +122,7 @@ function createCategorySection(category, products) {
     const section = document.createElement('section');
     section.className = 'mb-12 grid grid-cols-1 md:grid-cols-3 gap-6 items-center';
 
-    // Columna izquierda: portada/banner
+
     const portadaDiv = document.createElement('div');
     portadaDiv.className = 'col-span-1 flex flex-col items-center justify-center';
     portadaDiv.innerHTML = `
@@ -136,7 +136,7 @@ function createCategorySection(category, products) {
         markActiveCategory(category);
     });
 
-    // Columna derecha: carrusel con flechas
+
     const carruselDiv = document.createElement('div');
     carruselDiv.className = 'col-span-2 flex flex-col items-center';
     carruselDiv.innerHTML = `
@@ -153,7 +153,7 @@ function createCategorySection(category, products) {
         carousel.appendChild(createProductCard(product));
     });
 
-    // Carrusel funcional
+  
     let scrollIndex = 0;
     const visibleCards = 3;
     const arrowPrev = carruselDiv.querySelector('.carousel-arrow[aria-label="Anterior"]');
@@ -173,14 +173,14 @@ function createCategorySection(category, products) {
         if (scrollIndex < products.length - visibleCards) scrollIndex++;
         updateCarousel();
     });
-    setTimeout(updateCarousel, 100); // Espera a que se rendericen los cards
+    setTimeout(updateCarousel, 100); 
 
     section.appendChild(portadaDiv);
     section.appendChild(carruselDiv);
     return section;
 }
 
-// Card de producto
+
 function createProductCard(product) {
     const dolarToPYG = 7300;
     const pricePYG = Math.round(product.price * dolarToPYG).toLocaleString('es-PY');
@@ -208,7 +208,7 @@ function createProductCard(product) {
     return card;
 }
 
-// Búsqueda de productos
+
 function handleSearch(e) {
     const searchTerm = e.target.value.toLowerCase();
     let productsToShow = allProducts;
@@ -228,7 +228,7 @@ function handleSearch(e) {
     }
 }
 
-// Utilidad debounce
+
 function debounce(func, delay) {
     let timeoutId;
     return function (...args) {
@@ -239,7 +239,7 @@ function debounce(func, delay) {
     };
 }
 
-// Inicialización principal
+
 document.addEventListener('DOMContentLoaded', async () => {
     allProducts = await getProducts();
     allCategories = await getCategories();
