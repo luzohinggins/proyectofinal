@@ -1,6 +1,8 @@
 const API_BASE_URL = "https://fakestoreapi.com";
 
-@param {boolean} isLoading - Estado de carga.
+/**
+ * Muestra u oculta el spinner de carga.
+ * @param {boolean} isLoading - Estado de carga.
  */
 function toggleLoading(isLoading) {
     const spinner = document.getElementById('spinner');
@@ -9,8 +11,10 @@ function toggleLoading(isLoading) {
     }
 }
 
- @returns {Promise<Array>} Lista de productos.
-
+/**
+ * Obtiene todos los productos.
+ * @returns {Promise<Array>} Lista de productos.
+ */
 export async function getProducts() {
     toggleLoading(true);
     try {
@@ -32,9 +36,11 @@ export async function getProducts() {
     }
 }
 
- @param {number} id - ID del producto.
- @returns {Promise<Object>} El objeto producto.
-
+/**
+ * Obtiene un producto por ID.
+ * @param {number} id - ID del producto.
+ * @returns {Promise<Object>} El objeto producto.
+ */
 export async function getProductById(id) {
     toggleLoading(true);
     try {
@@ -56,9 +62,10 @@ export async function getProductById(id) {
     }
 }
 
-
- @returns {Promise<Array>} Lista de strings con los nombres de las categorías.
- 
+/**
+ * Obtiene las categorías de productos.
+ * @returns {Promise<Array>} Lista de strings con los nombres de las categorías.
+ */
 export async function getCategories() {
     try {
         const response = await fetch(`${API_BASE_URL}/products/categories`);
@@ -72,10 +79,11 @@ export async function getCategories() {
     }
 }
 
-
- @param {string} category 
- @returns {Promise<Array>} 
-
+/**
+ * Obtiene productos por categoría.
+ * @param {string} category 
+ * @returns {Promise<Array>} 
+ */
 export async function getProductsByCategory(category) {
     toggleLoading(true);
     try {

@@ -1,23 +1,27 @@
 const CART_STORAGE_KEY = 'fakeShopCart';
 
-
- @returns {Array} El carrito de compras actual.
-
+/**
+ * Obtiene el carrito de compras actual.
+ * @returns {Array}
+ */
 function getCart() {
     const cart = localStorage.getItem(CART_STORAGE_KEY);
     return cart ? JSON.parse(cart) : [];
 }
 
-
- @param {Array} cart
-
+/**
+ * Guarda el carrito en localStorage.
+ * @param {Array} cart
+ */
 function saveCart(cart) {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
     updateCartCount();
 }
 
-
- @param {Object} product
+/**
+ * Añade un producto al carrito.
+ * @param {Object} product
+ */
 export function addToCart(product) {
     const cart = getCart();
     const existingItem = cart.find(item => item.id === product.id);
@@ -30,6 +34,7 @@ export function addToCart(product) {
             quantity: 1
         });
     }
+    
 
     saveCart(cart);
 
@@ -42,22 +47,27 @@ export function addToCart(product) {
     });
 }
 
-
-
- @param {number} productId
-
+/**
+ * Elimina un producto del carrito.
+ * @param {number} productId
+ */
 export function removeFromCart(productId) {
     let cart = getCart();
     cart = cart.filter(item => item.id !== productId);
     saveCart(cart);
 }
 
-
+/**
+ * Vacía el carrito.
+ */
 export function clearCart() {
     localStorage.removeItem(CART_STORAGE_KEY);
     updateCartCount();
 }
 
+/**
+ * Actualiza el contador del carrito en la interfaz.
+ */
 export function updateCartCount() {
     const cart = getCart();
     const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
@@ -69,17 +79,19 @@ export function updateCartCount() {
     }
 }
 
-
- @returns {Array} 
- 
+/**
+ * Obtiene los items del carrito.
+ * @returns {Array}
+ */
 export function getCartItems() {
     return getCart();
 }
 
-
- @param {number} productId
- @param {number} newQuantity
- 
+/**
+ * Actualiza la cantidad de un producto en el carrito.
+ * @param {number} productId
+ * @param {number} newQuantity
+ */
 export function updateItemQuantity(productId, newQuantity) {
     let cart = getCart();
     const item = cart.find(i => i.id === productId);
