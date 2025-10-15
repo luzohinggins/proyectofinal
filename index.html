@@ -7,94 +7,66 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+        .banner-container {
+            position: relative;
+            width: 100%;
+            height: 260px;
+            max-height: 320px;
+            overflow: hidden;
+            border-radius: 1rem;
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .banner-text {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 2;
+            color: white;
+            text-shadow: 0 2px 8px #000;
+            pointer-events: none;
         }
-        #spinner {
-            border-top-color: #3b82f6;
-            animation: spin 1s linear infinite;
+        .banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 1rem;
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 1;
+            transition: opacity 0.5s;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .carousel-products {
+            display: flex;
+            gap: 1.5rem;
+            transition: transform 0.4s cubic-bezier(.4,0,.2,1);
+        }
+        .carousel-arrow {
+            background: #6366f1;
+            color: #fff;
+            border-radius: 9999px;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            font-size: 1.5rem;
+            transition: background 0.2s;
+        }
+        .carousel-arrow:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
 
-    <header class="bg-white shadow-md sticky top-0 z-10">
-        <div class="container mx-auto p-4 flex justify-between items-center">
-            <a href="index.html" class="text-3xl font-extrabold text-indigo-600 tracking-wider">💡LuzShop</a>
-
-            <div class="hidden md:block w-1/3">
-                <input type="text" id="search-input" placeholder="Buscar productos..."
-                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150">
-            </div>
-
-            <a href="./page/carrito.html" class="relative text-gray-700 hover:text-indigo-600 transition duration-150 p-2" aria-label="Ir al Carrito">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                <span id="cart-count" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full hidden">0</span>
-            </a>
-        </div>
-    </header>
-
+    <header id="main-header"></header>
     <main class="container mx-auto p-4 md:p-8">
-
-        <section class="bg-indigo-500 text-white p-12 rounded-xl shadow-xl mb-10 text-center">
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-3">¡OFERTAS DE VERANO!</h1>
-            <p class="text-xl opacity-90 mb-6">Encuentra los mejores productos a precios increíbles.</p>
-            <a href="#products-section" class="inline-block bg-white text-indigo-600 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transition duration-300">
-                Ver Catálogo
-            </a>
-        </section>
-
-        <section id="products-section">
-            <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">Mirá todos nuestros Productos</h2>
-
-            <div id="category-banner" class="mb-6"></div>
-
-            <div class="md:hidden mb-4">
-                <input type="text" id="search-input-mobile" placeholder="Buscar productos..."
-                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150">
-            </div>
-
-            <nav class="flex space-x-3 overflow-x-auto whitespace-nowrap pb-4 no-scrollbar mb-6" id="category-nav">
-                </nav>
-
-            <div id="spinner" class="hidden absolute top-1/2 left-1/2 -mt-4 -ml-4 w-8 h-8 border-4 border-gray-200 border-solid rounded-full"></div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="products-container">
-                </div>
-
-            <div class="text-center mt-10">
-                <button id="load-more-btn" class="bg-indigo-600 text-white font-semibold py-3 px-10 rounded-full hover:bg-indigo-700 transition duration-300 shadow-md">
-                    Ver más productos
-                </button>
-            </div>
-        </section>
-
-        <section id="summary-section" class="bg-white rounded-lg shadow-md p-6 mt-10">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Resumen de la Compra</h2>
-
-            <div class="flex justify-between text-gray-700 mb-2">
-                <span class="font-medium">Subtotal:</span>
-                <span id="subtotal-amount">₲0 PYG</span>
-            </div>
-            <div class="flex justify-between text-gray-700 mb-2">
-                <span class="font-medium">Envío:</span>
-                <span class="font-medium" id="shipping-cost">₲${Math.round(SHIPPING_COST * dolarToPYG).toLocaleString('es-PY')} PYG</span>
-            </div>
-            <div class="flex justify-between text-gray-800 font-bold border-t pt-4 mt-4">
-                <span class="text-lg">Total:</span>
-                <span id="total-amount" class="text-lg">₲0 PYG</span>
-            </div>
-        </section>
-
+        <section id="dynamic-banner-container"></section>
+        <section id="catalog-container"></section>
     </main>
-
     <footer class="bg-gray-800 text-white mt-16 p-8 text-center">
         <div class="container mx-auto">
             <div class="flex justify-center space-x-6 mb-4">
@@ -105,8 +77,6 @@
             <p>© 2025 💡LuzShop Demo. Todos los derechos reservados.</p>
         </div>
     </footer>
-
     <script type="module" src="./js/app.js"></script>
-
 </body>
 </html>
