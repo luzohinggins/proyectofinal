@@ -1,23 +1,24 @@
 const CART_STORAGE_KEY = 'fakeShopCart';
 
-
-@returns {Array}
-
+/**
+ * @returns {Array}
+ */
 function getCart() {
     const cart = localStorage.getItem(CART_STORAGE_KEY);
     return cart ? JSON.parse(cart) : [];
 }
 
-
-@param {Array} cart
-
+/**
+ * @param {Array} cart
+ */
 function saveCart(cart) {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
     updateCartCount();
 }
 
-@param {Object} product
-
+/**
+ * @param {Object} product
+ */
 export function addToCart(product) {
     const cart = getCart();
     const existingItem = cart.find(item => item.id === product.id);
@@ -30,7 +31,6 @@ export function addToCart(product) {
             quantity: 1
         });
     }
-    
 
     saveCart(cart);
 
@@ -43,8 +43,9 @@ export function addToCart(product) {
     });
 }
 
-@param {number} productId
-
+/**
+ * @param {number} productId
+ */
 export function removeFromCart(productId) {
     let cart = getCart();
     cart = cart.filter(item => item.id !== productId);
@@ -55,7 +56,6 @@ export function clearCart() {
     localStorage.removeItem(CART_STORAGE_KEY);
     updateCartCount();
 }
-
 
 export function updateCartCount() {
     const cart = getCart();
@@ -68,15 +68,17 @@ export function updateCartCount() {
     }
 }
 
-@returns {Array}
-
+/**
+ * @returns {Array}
+ */
 export function getCartItems() {
     return getCart();
 }
 
-@param {number} productId
-@param {number} newQuantity
-
+/**
+ * @param {number} productId
+ * @param {number} newQuantity
+ */
 export function updateItemQuantity(productId, newQuantity) {
     let cart = getCart();
     const item = cart.find(i => i.id === productId);
