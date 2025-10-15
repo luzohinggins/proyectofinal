@@ -128,13 +128,15 @@
 
     
         function renderProductDetails(product) {
+            const dolarToPYG = 7300;
+            const pricePYG = Math.round(product.price * dolarToPYG).toLocaleString('es-PY');
             pageTitleEl.textContent = `${product.title} | 💡LuzShop`;
             titleEl.textContent = product.title;
             categoryEl.textContent = product.category;
             imageEl.src = product.image;
             imageEl.alt = product.title;
             descriptionEl.textContent = product.description;
-            priceEl.textContent = `$${product.price.toFixed(2)}`;
+            priceEl.textContent = `₲${pricePYG} PYG`;
             ratingEl.textContent = `⭐ ${product.rating.rate}`;
             ratingCountEl.textContent = `(${product.rating.count} opiniones)`;
             

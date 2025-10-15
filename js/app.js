@@ -72,7 +72,7 @@ function renderProducts(products) {
 }
 
 function createProductCard(product) {
-    const dolarToPYG = 7300; // Puedes actualizar este valor según el tipo de cambio actual
+    const dolarToPYG = 7300;
     const pricePYG = Math.round(product.price * dolarToPYG).toLocaleString('es-PY');
     const card = document.createElement('div');
     card.className = 'bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-[1.02] flex flex-col';
@@ -82,7 +82,6 @@ function createProductCard(product) {
             <div>
                 <h3 class="font-bold text-lg mb-2 truncate">${product.title}</h3>
                 <p class="text-gray-600 text-sm mb-3 capitalize">${product.category}</p>
-                <p class="text-xl font-extrabold text-indigo-600 mb-1">$${product.price.toFixed(2)} USD</p>
                 <p class="text-lg font-bold text-green-600 mb-4">₲${pricePYG} PYG</p>
             </div>
             <div class="flex justify-between items-center mt-auto">

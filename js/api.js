@@ -2,7 +2,7 @@ const API_BASE_URL = "https://fakestoreapi.com";
 
 /**
  * Muestra u oculta el spinner de carga.
- * @param {boolean} isLoading - Estado de carga.
+ * @param {boolean} isLoading
  */
 function toggleLoading(isLoading) {
     const spinner = document.getElementById('spinner');
@@ -13,7 +13,7 @@ function toggleLoading(isLoading) {
 
 /**
  * Obtiene todos los productos.
- * @returns {Promise<Array>} Lista de productos.
+ * @returns {Promise<Array>}
  */
 export async function getProducts() {
     toggleLoading(true);
@@ -38,8 +38,8 @@ export async function getProducts() {
 
 /**
  * Obtiene un producto por ID.
- * @param {number} id - ID del producto.
- * @returns {Promise<Object>} El objeto producto.
+ * @param {number} id
+ * @returns {Promise<Object>}
  */
 export async function getProductById(id) {
     toggleLoading(true);
@@ -64,7 +64,7 @@ export async function getProductById(id) {
 
 /**
  * Obtiene las categorías de productos.
- * @returns {Promise<Array>} Lista de strings con los nombres de las categorías.
+ * @returns {Promise<Array>}
  */
 export async function getCategories() {
     try {

@@ -73,6 +73,7 @@
 
       
         function renderCart() {
+            const dolarToPYG = 7300;
             const items = getCartItems();
             cartList.innerHTML = '';
             let subtotal = 0;
@@ -86,30 +87,33 @@
                 clearCartBtn.disabled = false;
                 items.forEach(item => {
                     subtotal += item.price * item.quantity;
-                    cartList.appendChild(createCartItemElement(item));
+                    cartList.appendChild(createCartItemElement(item, dolarToPYG));
                 });
             }
 
-            const total = subtotal + SHIPPING_COST;
-            subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-            totalEl.textContent = `$${total.toFixed(2)}`;
+            const subtotalPYG = Math.round(subtotal * dolarToPYG).toLocaleString('es-PY');
+            const totalPYG = Math.round((subtotal + SHIPPING_COST) * dolarToPYG).toLocaleString('es-PY');
+            subtotalEl.textContent = `₲${subtotalPYG} PYG`;
+            totalEl.textContent = `₲${totalPYG} PYG`;
             updateCartCount();
         }
 
-        function createCartItemElement(item) {
+        function createCartItemElement(item, dolarToPYG) {
+            const pricePYG = Math.round(item.price * dolarToPYG).toLocaleString('es-PY');
+            const totalPYG = Math.round(item.price * item.quantity * dolarToPYG).toLocaleString('es-PY');
             const itemDiv = document.createElement('div');
             itemDiv.className = 'flex items-center space-x-4 border-b pb-4 last:border-b-0 last:pb-0';
             itemDiv.innerHTML = `
                 <img src="${item.image}" alt="${item.title}" class="w-20 h-20 object-contain rounded">
                 <div class="flex-grow">
                     <h3 class="font-semibold text-gray-800 truncate">${item.title}</h3>
-                    <p class="text-indigo-600 font-bold">$${item.price.toFixed(2)}</p>
+                    <p class="text-green-600 font-bold">₲${pricePYG} PYG</p>
                 </div>
                 <div class="flex items-center space-x-3">
                     <input type="number" min="1" value="${item.quantity}" data-id="${item.id}"
                            class="w-16 p-2 border rounded text-center quantity-input"
                            aria-label="Cantidad de ${item.title}">
-                    <p class="font-semibold w-20 text-right hidden sm:block">Total: $${(item.price * item.quantity).toFixed(2)}</p>
+                    <p class="font-semibold w-32 text-right hidden sm:block">Total: ₲${totalPYG} PYG</p>
                     <button class="text-red-500 hover:text-red-700 remove-item-btn" data-id="${item.id}" aria-label="Eliminar">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
