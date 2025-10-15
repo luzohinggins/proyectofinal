@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras | 💡LuzShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.min.js"></script>
+</head>
+<body class="bg-gray-100">
+
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto p-4 flex justify-between items-center">
+            <a href="../index.html" class="text-2xl font-bold text-indigo-600">💡LuzShop</a>
+            <nav>
+                <a href="../index.html" class="text-gray-600 hover:text-indigo-600 transition">Volver a la Tienda</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6 md:p-10">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">🛍️ Tu Carrito de Compras</h1>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <section id="cart-items-container" class="lg:w-2/3 bg-white p-6 rounded-lg shadow-lg">
+                <div id="cart-list" class="space-y-4">
+                    <p class="text-gray-500 text-center" id="empty-cart-message">Tu carrito está vacío.</p>
+                </div>
+            </section>
+
+            <section class="lg:w-1/3 bg-white p-6 rounded-lg shadow-lg h-fit">
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Resumen del Pedido</h2>
+                <div class="space-y-3 mb-6">
+                    <div class="flex justify-between">
+                        <span>Subtotal:</span>
+                        <span id="cart-subtotal" class="font-medium">$0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Envío (Fijo):</span>
+                        <span class="font-medium">$10.00</span>
+                    </div>
+                    <div class="flex justify-between pt-2 border-t border-gray-200">
+                        <span class="text-xl font-bold">Total:</span>
+                        <span id="cart-total" class="text-xl font-bold text-indigo-600">$10.00</span>
+                    </div>
+                </div>
+
+                <button id="checkout-btn" class="w-full bg-indigo-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition duration-300" disabled>
+                    Simular Checkout
+                </button>
+                <button id="clear-cart-btn" class="w-full mt-3 text-red-500 py-2 rounded-lg text-sm hover:text-red-700 transition duration-300">
+                    Vaciar Carrito
+                </button>
+            </section>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-10 p-6 text-center">
+        <p>© 2025 💡LuzShop Demo. Desarrollado con ❤️ LuzOhinngins.</p>
+    </footer>
+
+    <script type="module">
+        import { getCartItems, removeFromCart, clearCart, updateCartCount, updateItemQuantity } from '../js/carrito.js';
+
+        const SHIPPING_COST = 10.00;
+        const cartList = document.getElementById('cart-list');
+        const subtotalEl = document.getElementById('cart-subtotal');
+        const totalEl = document.getElementById('cart-total');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const clearCartBtn = document.getElementById('clear-cart-btn');
+        const emptyMessage = document.getElementById('empty-cart-message');
+
+      
+        function renderCart() {
+            const items = getCartItems();
+            cartList.innerHTML = '';
+            let subtotal = 0;
+
+            if (items.length === 0) {
+                cartList.innerHTML = '<p class="text-gray-500 text-center">Tu carrito está vacío.</p>';
+                checkoutBtn.disabled = true;
+                clearCartBtn.disabled = true;
+            } else {
+                checkoutBtn.disabled = false;
+                clearCartBtn.disabled = false;
+                items.forEach(item => {
+                    subtotal += item.price * item.quantity;
+                    cartList.appendChild(createCartItemElement(item));
+                });
+            }
+
+            const total = subtotal + SHIPPING_COST;
+            subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+            totalEl.textContent = `$${total.toFixed(2)}`;
+            updateCartCount();
+        }
+
+        function createCartItemElement(item) {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'flex items-center space-x-4 border-b pb-4 last:border-b-0 last:pb-0';
+            itemDiv.innerHTML = `
+                <img src="${item.image}" alt="${item.title}" class="w-20 h-20 object-contain rounded">
+                <div class="flex-grow">
+                    <h3 class="font-semibold text-gray-800 truncate">${item.title}</h3>
+                    <p class="text-indigo-600 font-bold">$${item.price.toFixed(2)}</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <input type="number" min="1" value="${item.quantity}" data-id="${item.id}"
+                           class="w-16 p-2 border rounded text-center quantity-input"
+                           aria-label="Cantidad de ${item.title}">
+                    <p class="font-semibold w-20 text-right hidden sm:block">Total: $${(item.price * item.quantity).toFixed(2)}</p>
+                    <button class="text-red-500 hover:text-red-700 remove-item-btn" data-id="${item.id}" aria-label="Eliminar">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>
+            `;
+            return itemDiv;
+        }
+
+    
+        function handleCheckout() {
+             Swal.fire({
+                title: '¡Compra Exitosa!',
+                text: 'Gracias por tu compra. Tu pedido será procesado en breve.',
+                icon: 'success',
+                confirmButtonText: 'Genial'
+            }).then(() => {
+                const jsConfetti = new JSConfetti();
+                jsConfetti.addConfetti({
+                     confettiRadius: 6,
+                     confettiNumber: 500,
+                     confettiColors: [
+                        '#ff0a54', '#ff477e', '#ff7096', '#ff85a1', '#fbb1bd', '#f9bec7',
+                    ],
+              
+                });
+
+                clearCart();
+                renderCart();
+            });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', renderCart);
+
+        cartList.addEventListener('click', (e) => {
+            if (e.target.closest('.remove-item-btn')) {
+                const productId = parseInt(e.target.closest('.remove-item-btn').dataset.id);
+                removeFromCart(productId);
+                renderCart();
+            }
+        });
+
+        cartList.addEventListener('change', (e) => {
+            if (e.target.classList.contains('quantity-input')) {
+                const productId = parseInt(e.target.dataset.id);
+                const newQuantity = parseInt(e.target.value);
+                updateItemQuantity(productId, newQuantity);
+                renderCart(); 
+            }
+        });
+
+        clearCartBtn.addEventListener('click', () => {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esto vaciará todo tu carrito.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, vaciar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    clearCart();
+                    renderCart();
+                    Swal.fire('¡Vacío!', 'Tu carrito ha sido vaciado.', 'success');
+                }
+            });
+        });
+
+        checkoutBtn.addEventListener('click', handleCheckout);
+
+    </script>
+
+</body>
+</html>

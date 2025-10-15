@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Detalle del Producto | 💡LuzShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        #spinner-detail {
+            border-top-color: #3b82f6;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto p-4 flex justify-between items-center">
+            <a href="../index.html" class="text-2xl font-bold text-indigo-600">💡LuzShop</a>
+            <a href="../index.html" class="text-gray-600 hover:text-indigo-600 transition">Volver a la Tienda</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6 md:p-10 min-h-[80vh]">
+        
+        <div id="spinner-detail" class="w-12 h-12 border-4 border-gray-200 border-solid rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden"></div>
+
+        <div id="product-detail-container" class="bg-white p-8 rounded-xl shadow-lg mt-8 hidden">
+            <div class="flex flex-col lg:flex-row gap-10">
+                <div class="lg:w-1/2 flex justify-center items-center p-4">
+                    <img id="product-image" src="" alt="Imagen del producto" class="max-h-96 object-contain rounded-lg shadow-md">
+                </div>
+                
+                <div class="lg:w-1/2">
+                    <p id="product-category" class="text-sm font-semibold text-indigo-600 uppercase mb-2"></p>
+                    <h1 id="product-title" class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-4"></h1>
+                    
+                    <div class="flex items-center mb-6">
+                        <span id="product-rating" class="text-yellow-500 font-bold mr-2"></span>
+                        <span id="product-rating-count" class="text-gray-500 text-sm"></span>
+                    </div>
+
+                    <p id="product-description" class="text-gray-600 mb-6 leading-relaxed"></p>
+
+                    <div class="flex items-baseline mb-8">
+                        <span class="text-5xl font-extrabold text-indigo-700" id="product-price"></span>
+                    </div>
+
+                    <button id="add-to-cart-detail-btn" class="w-full lg:w-3/4 bg-indigo-600 text-white py-3 rounded-full text-lg font-bold hover:bg-indigo-700 transition duration-300 shadow-xl">
+                        Añadir al Carrito
+                    </button>
+                    
+                </div>
+            </div>
+        </div>
+        
+        <p id="error-message" class="text-center text-red-500 text-xl mt-20 hidden">Producto no encontrado o error de carga.</p>
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-10 p-6 text-center">
+        <p>© 2025 💡LuzShop Demo. Desarrollado con ❤️ y Luz Ohinggins.</p>
+    </footer>
+
+    <script type="module">
+        import { getProductById } from '../js/api.js';
+        import { addToCart, updateCartCount } from '../js/carrito.js';
+
+        const container = document.getElementById('product-detail-container');
+        const spinner = document.getElementById('spinner-detail');
+        const errorMessage = document.getElementById('error-message');
+        const titleEl = document.getElementById('product-title');
+        const categoryEl = document.getElementById('product-category');
+        const imageEl = document.getElementById('product-image');
+        const descriptionEl = document.getElementById('product-description');
+        const priceEl = document.getElementById('product-price');
+        const ratingEl = document.getElementById('product-rating');
+        const ratingCountEl = document.getElementById('product-rating-count');
+        const addToCartBtn = document.getElementById('add-to-cart-detail-btn');
+        const pageTitleEl = document.getElementById('page-title');
+        
+        let currentProduct = null;
+
+       
+        function toggleLoading(isLoading) {
+            spinner.classList.toggle('hidden', !isLoading);
+            container.classList.toggle('hidden', isLoading);
+            errorMessage.classList.add('hidden');
+        }
+
+    
+        document.addEventListener('DOMContentLoaded', async () => {
+            toggleLoading(true);
+            updateCartCount();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+
+            if (!productId) {
+                toggleLoading(false);
+                errorMessage.textContent = 'ID de producto no especificado.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            currentProduct = await getProductById(productId);
+
+            if (!currentProduct) {
+                toggleLoading(false);
+                errorMessage.textContent = 'Producto no encontrado o error al cargar.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            renderProductDetails(currentProduct);
+
+            addToCartBtn.addEventListener('click', () => {
+                if (currentProduct) {
+                    addToCart(currentProduct);
+                }
+            });
+            
+            toggleLoading(false);
+        });
+
+    
+        function renderProductDetails(product) {
+            pageTitleEl.textContent = `${product.title} | 💡LuzShop`;
+            titleEl.textContent = product.title;
+            categoryEl.textContent = product.category;
+            imageEl.src = product.image;
+            imageEl.alt = product.title;
+            descriptionEl.textContent = product.description;
+            priceEl.textContent = `$${product.price.toFixed(2)}`;
+            ratingEl.textContent = `⭐ ${product.rating.rate}`;
+            ratingCountEl.textContent = `(${product.rating.count} opiniones)`;
+            
+            container.classList.remove('hidden');
+        }
+    </script>
+
+</body>
+</html>
